@@ -1,0 +1,123 @@
+
+main {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.btn-common {
+  background-color: #87ceeb;
+  border: 1px solid #87ceeb;
+  color: #000000;
+
+  &:hover {
+    background-color: #87ceeb;
+    border: 1px solid #87ceeb;
+  }
+}
+
+.sign-up-in-register {
+  float: right;
+}
+
+.field-error {
+  padding-left: 150px;
+  color: red;
+  margin-top: -10px;
+}
+
+.login-error {
+  text-align: right;
+  color: red;
+  margin-bottom: 35px;
+}
+
+.login-container-wrapper {
+  
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+
+  .login-container {
+
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    width: 700px;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    button {
+      border-radius: 40px;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    form {
+
+      text-align: center;
+
+      .inline-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+  
+        .label {
+          margin: 0px;
+          width: 100px;
+        }
+  
+        input {
+          width: 250px;
+        }
+      } 
+
+      .submit-button-container {
+        text-align: right;;
+      }
+
+      .sign-up-link-container {
+        padding-left: 100px;
+      }
+
+    }
+   
+  }
+
+}
+
+.register-container-wrapper {
+
+  height: 100vh;
+
+  .container-fluid, .row {
+    height: 100%;
+  }
+
+  .left-side {
+    background-color: #87ceeb;
+  }
+
+  .right-side {
+    
+    form {
+     
+      .inline-group {
+        display: flex;
+        align-items: center;
+
+        label {
+          width: 200px;
+          margin: 0px;
+        }
+      }
+
+    }
+
+
+  }
+
+}
+
