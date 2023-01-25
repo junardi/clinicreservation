@@ -6,7 +6,7 @@ export default function AdminLayout({children}) {
   const doSignout = async(event) => {
     event.preventDefault();
 
-    const result = await signOut({redirect: true, callbackUrl: "/"});
+    const result = await signOut({redirect: true, callbackUrl: "/login"});
 
     //console.log(result);
   };
@@ -16,7 +16,7 @@ export default function AdminLayout({children}) {
       <div>
         <div>
           <header>
-            <h1>Child Mapping Information System <Link href="/" onClick={doSignout}>Signout</Link></h1>                                                                  
+            <h1>Online Reservation and Appointment With Records System <Link href="/" onClick={doSignout}>Signout</Link></h1>                                                                  
           </header>
         </div>
       </div>

@@ -1,6 +1,10 @@
 
 main {
-  background-color: rgba(0, 0, 0, 0.1);
+  // background-color: rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
 }
 
 .btn-common {
@@ -30,63 +34,66 @@ main {
   margin-bottom: 35px;
 }
 
-.login-container-wrapper {
+// .login-container-wrapper {
   
-  display: flex;
-  justify-content: center;
-  height: 100vh;
+//   display: flex;
+//   justify-content: center;
+//   height: 100vh;
 
-  .login-container {
+//   .login-container {
 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center;
-    justify-content: center;
-    width: 700px;
+//     display: flex; 
+//     flex-direction: column; 
+//     align-items: center;
+//     justify-content: center;
+//     width: 700px;
 
-    h1 {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+//     h1 {
+//       text-align: center;
+//       margin-bottom: 40px;
+//     }
 
-    button {
-      border-radius: 40px;
-      padding-left: 15px;
-      padding-right: 15px;
-    }
+//     button {
+//       border-radius: 40px;
+//       padding-left: 15px;
+//       padding-right: 15px;
+//     }
 
-    form {
+//     form {
 
-      text-align: center;
+//       text-align: center;
 
-      .inline-group {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+//       .inline-group {
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
   
-        .label {
-          margin: 0px;
-          width: 100px;
-        }
+//         .label {
+//           margin: 0px;
+//           width: 100px;
+//         }
   
-        input {
-          width: 250px;
-        }
-      } 
+//         input {
+//           width: 250px;
+//         }
+//       } 
 
-      .submit-button-container {
-        text-align: right;;
-      }
+//       .submit-button-container {
+//         text-align: right;;
+//       }
 
-      .sign-up-link-container {
-        padding-left: 100px;
-      }
+//       .sign-up-link-container {
+//         padding-left: 100px;
+//       }
 
-    }
+//     }
    
-  }
+//   }
 
-}
+// }
+
+
+
 
 .register-container-wrapper {
 
@@ -121,3 +128,107 @@ main {
 
 }
 
+
+.login-container {
+
+  margin-top: 50px;
+
+  .login-wrap {
+
+    width: 450px;
+    margin: 45px auto;
+    background-color: #f7f7f7;
+    padding: 30px;
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+    }
+
+  }
+
+  img {
+    border-radius: 2px;
+  }
+
+}
+
+
+
+
+// below for general layout 
+
+
+.navigation-container {
+  
+  background-color: #009400;
+
+  .navigation-header {
+
+    display: flex;
+    align-items: center;
+    height: 100%;
+    min-height: 4rem;
+    color: #FFFFFF;
+
+    h1 {
+      
+      font-size: 1.25rem;
+      margin: 0px;
+
+      a {
+        color: #FFFFFF;
+        text-decoration: none;
+      }
+    }
+
+  }
+
+  .left-header {
+
+    margin-left: auto;
+
+    span {
+      cursor: pointer;
+      margin-right: 25px;
+      color: #FFFFFF;
+
+      &:last-child {
+        margin-right: 0px;
+      }
+    }
+
+    a {
+      text-decoration: none;
+      color: #FFFFFF;
+      margin-right: 25px;
+
+      &.active {
+        color: #28f3ee;
+      }
+
+      &:last-child {
+        margin-right: 0px;
+      }
+    }
+
+
+  }
+
+ 
+
+}
+
+.main-container {
+  margin-top: 20px;
+}
+
+.footer {
+
+  .footer-inner {
+    margin-top: 30px;
+    padding: 20px 0px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  
+}

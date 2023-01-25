@@ -8,13 +8,12 @@ const AuthGuard = ({children}) => {
   const router = useRouter();
   const { pathname } = router;
 
-  if(status === 'loading') {
-    return "<div>Loading...</div>";
-  }
+  console.log(status);
+  console.log(pathname);
 
-  if(status === 'authenticated' && pathname === '/') {
+  if(status === 'authenticated' && pathname === '/login') {
     router.push('/admin');
-  } else if(status === 'authenticated' && pathname === '/register') {
+  } else if(status === 'authenticated' && pathname === '/') {
     router.push('/admin');
   } else {
     return children;
