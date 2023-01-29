@@ -150,7 +150,7 @@ function Home() {
 
       try {
         const fetchData = await fetch('/api/patients',{
-          method: 'Post',
+          method: 'POST',
           body: JSON.stringify(data),
           headers: {
             'Content-Type': 'application/json'
@@ -158,13 +158,31 @@ function Home() {
         });
 
         const jsonData = await fetchData.json();
-        //console.log(jsonData);
 
-        toast('Generated username and password is sent to your email: ' + email);
-        toast('Check email and proceed to login to view appointment status...');
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
+        const userId = jsonData.data.insertId;
+
+        try {
+          const fetchDataPresc = await fetch('/api/userprescriptions',{
+            method: 'POST',
+            body: JSON.stringify({prescription: 'Not set', userId: userId}),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const jsonDataPresc = await fetchDataPresc.json();
+
+          //console.log(jsonDataPresc);
+
+          toast('Generated username and password is sent to your email: ' + email);
+          toast('Check email and proceed to login to view appointment status...');
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+          
+        } catch(error) {
+          console.log(error);
+        }
 
       } catch(error) {
         console.log(error);

@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     try {
 
       const result = await excuteQuery({
-        query: 'SELECT * FROM users WHERE role=?',                                                                 
+        query: 'SELECT * FROM users LEFT JOIN prescriptions ON users.userId = prescriptions.userId WHERE role=?',                                                                 
         values: [role]
       });
       
