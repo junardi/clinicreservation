@@ -1,4 +1,32 @@
 import excuteQuery from "../../../lib/db";
+import fetch from 'node-fetch';
+
+const SERVICE_PLAN_ID = 'bada997d9b7548dc832c6d8453481af0';
+const API_TOKEN = '39a977faef18433aa02af0a4d56c3e14';
+const SINCH_NUMBER = '+447520652728';
+
+async function run(number, message) {
+
+  const resp = await fetch(
+    'https://us.sms.api.sinch.com/xms/v1/' + SERVICE_PLAN_ID + '/batches',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + API_TOKEN
+      },
+      body: JSON.stringify({
+        from: SINCH_NUMBER,
+        to: [number],
+        body: message
+      })
+    }
+  );
+
+  const data = await resp.json();
+  console.log(data);
+  
+}
 
 /* Database Variables */
 
@@ -61,6 +89,11 @@ export default async function handler(req, res) {
         success: true,
         data: result 
       };
+
+      const message = "Username: " + username + " Password: " + passwordText;
+
+      const sendText = await run(contactNumber, message);
+      console.log(sendText);
 
       res.status(200).json(data);
       
