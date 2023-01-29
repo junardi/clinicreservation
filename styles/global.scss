@@ -3,6 +3,20 @@ main {
   // background-color: rgba(0, 0, 0, 0.1);
 }
 
+.react-calendar {
+  width: 100%;
+}
+
+
+.react-calendar__tile {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.react-calendar__tile.react-calendar__tile--active {
+  color: #FFFFFF !important;
+}
+
+
 .form-group {
   margin-bottom: 15px;
 }

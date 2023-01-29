@@ -1,7 +1,20 @@
 import { Container, Row, Col } from "react-bootstrap";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export default function GeneralLayout({children}) {
+
+  const { data: session, status } = useSession();
+
+  const doSignout = async(event) => {
+    event.preventDefault();
+
+    const result = await signOut({redirect: true, callbackUrl: "/login"});
+
+    //console.log(result);
+  };
+
   return (
     <>
       <div className="navigation-container">
@@ -12,11 +25,18 @@ export default function GeneralLayout({children}) {
               <h1>
                 <Link href='/'>Online Reservation and Appointment With Records System</Link>
               </h1>
-
-              <div className="left-header">
-                <Link href="/">Home</Link>
-                <Link href="/login">Admin/Patient Login</Link>
-              </div>
+              { status !== 'authenticated' &&
+                <div className="left-header">
+                  <Link href="/">Home</Link>
+                  <Link href="/login">Admin/Patient Login</Link>
+                </div>
+              }
+              { status === 'authenticated' &&
+                <div className="left-header">
+                  <Link href="#" onClick={doSignout}>Logout</Link>
+                </div>
+              }
+              
             </Col>
           </Row>
         </Container>
