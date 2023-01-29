@@ -14,6 +14,7 @@ import Calendar from 'react-calendar';
 import NonSSRWrapper from '../components/nonssr/nonssr.component';
 import { hashPassword } from '../lib/data-helper';
 import { toast } from 'react-toastify';
+import { sendEmail } from '../utils/email/email.util';
 
 
 const defaultFormFields = {
@@ -171,6 +172,16 @@ function Home() {
           });
 
           const jsonDataPresc = await fetchDataPresc.json();
+
+          const templateParams = {
+            from_name: 'From CLinic', 
+            to_name: name,
+            to_email: email,
+            intro_message: "Below is your account",
+            message: "Your username: " + data.username + ", password: " + data.passwordText
+          };
+    
+          await sendEmail(templateParams);
 
           //console.log(jsonDataPresc);
 

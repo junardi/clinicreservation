@@ -6,6 +6,7 @@ import { useSession, getSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import { Fragment } from 'react';
 import { toast } from 'react-toastify';
+import { sendEmail } from '../../utils/email/email.util';
 
 
 const setupDate = (dateString) => {
@@ -95,6 +96,15 @@ function AdminComponent() {
 
       console.log(jsonData);
       toast("approved.");
+      const templateParams = {
+        from_name: 'From CLinic', 
+        to_name: data.patientName,
+        to_email: data.emailAddress,
+        intro_message: "Appointment Status",
+        message: "Your appointment is approved"
+      };
+
+      await sendEmail(templateParams);
       setRecall(!recall);
     } catch(error) {
       console.log(error);
@@ -120,6 +130,15 @@ function AdminComponent() {
 
       console.log(jsonData);
       toast("Rejected.");
+      const templateParams = {
+        from_name: 'From CLinic', 
+        to_name: data.patientName,
+        to_email: data.emailAddress,
+        intro_message: "Appointment Status",
+        message: "Your appointment is rejected"
+      };
+
+      await sendEmail(templateParams);
       setRecall(!recall);
     } catch(error) {
       console.log(error);

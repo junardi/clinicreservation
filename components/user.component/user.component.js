@@ -112,8 +112,9 @@ function UserComponent({userId}) {
             }
 
             <br />
-            <p className='text-center'><strong>Prescription:</strong> {reserveData.data[0].prescription}</p>
-            
+            { reserveData && reserveData.data &&
+              <p className='text-center'><strong>Prescription:</strong> {reserveData.data[0].prescription}</p>
+            }
           </Col>
         </Row>
       </Container>
