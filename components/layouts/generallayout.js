@@ -23,16 +23,18 @@ export default function GeneralLayout({children}) {
             <Col className='navigation-header'>
               
               <h1>
-                <Link href='/'>Online Reservation and Appointment With Records System</Link>
+                <Link href='/'>Online Reservation and Appointment Management System</Link>
               </h1>
               { status !== 'authenticated' &&
                 <div className="left-header">
                   <Link href="/">Home</Link>
+                  <Link href="/reservation">Reservation</Link>
                   <Link href="/login">Admin/Patient Login</Link>
                 </div>
               }
               { status === 'authenticated' &&
                 <div className="left-header">
+                  <Link href="/">Home</Link>
                   <Link href="#" onClick={doSignout}>Logout</Link>
                 </div>
               }

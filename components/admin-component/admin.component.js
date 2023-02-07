@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Table, Tabs, Tab } from 'react-bootstrap';
 
 import { useSession, getSession } from "next-auth/react";
 import { useRouter } from 'next/router';
@@ -8,24 +8,10 @@ import { Fragment } from 'react';
 import { toast } from 'react-toastify';
 import { sendEmail } from '../../utils/email/email.util';
 
-
-const setupDate = (dateString) => {
-  const dateObj = new Date('2023-02-01T16:00:00.000Z');
-  //console.log(dateObj);
-
-  const month = dateObj.getMonth() + 1; 
-  const day = dateObj.getDate();
-  const year = dateObj.getFullYear();
-
-  const date = year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2);
-
-  return date;
-
-};
+import { setupDate } from '../../lib/data-helper';
 
 function AdminComponent() {
 
-  
 
   const router = useRouter();
 
@@ -45,7 +31,11 @@ function AdminComponent() {
   //   })
   // }, []);
 
-  const [reserveData, setReserveData] = useState({});
+  const [reserveData, setReserveData] = useState([]);
+
+  const [notApprovedData, setNotApprovedData] = useState([]);
+  const [approvedData, setApprovedData] = useState([]);
+  const [paidData, setPaidData] = useState([]);
 
   const [recall, setRecall] = useState(false);
 
@@ -62,8 +52,32 @@ function AdminComponent() {
 
         const jsonData = await fetchData.json();
 
-        console.log(jsonData);
-        setReserveData(jsonData);
+        //console.log(jsonData);
+        const approvedData = jsonData.data.filter((el, index) => {
+          if(el.status === 'approved') {
+            return el;
+          }
+        });
+        setApprovedData(approvedData);
+        //console.log(approvedData);
+
+        const notApprovedData = jsonData.data.filter((el, index) => {
+          if(el.status === 'pending') {
+            return el;  
+          }
+        });
+        setNotApprovedData(notApprovedData);
+        //console.log(notApprovedData);
+
+        const paidData = jsonData.data.filter((el, index) => {
+          if(el.paid) {
+            return el;  
+          }
+        });
+
+        setPaidData(paidData);
+        //console.log(paidData);
+        
         return jsonData;
        
 
@@ -80,11 +94,12 @@ function AdminComponent() {
   const approve = async(event, data) => {
     event.preventDefault();
 
-    data.date = setupDate(data.date);
     data.status = 'approved';
 
+    console.log(data);
+
     try {
-      const fetchData = await fetch('/api/patients', {
+      const fetchData = await fetch('/api/reservations', {
         method: 'PUT',
         body: JSON.stringify(data),
         headers: {
@@ -98,13 +113,16 @@ function AdminComponent() {
       toast("approved.");
       const templateParams = {
         from_name: 'From CLinic', 
-        to_name: data.patientName,
+        to_name: data.firstName + " " + data.middleInitial + " " + data.lastName,
         to_email: data.emailAddress,
         intro_message: "Appointment Status",
         message: "Your appointment is approved"
       };
 
-      await sendEmail(templateParams);
+      if(data.emailAddress) {
+        await sendEmail(templateParams);
+      }
+     
       setRecall(!recall);
     } catch(error) {
       console.log(error);
@@ -166,54 +184,172 @@ function AdminComponent() {
             <h3>List of Appointments</h3>
             <br />
 
-            { reserveData && reserveData.data &&
-            <Table striped hover>
-              <thead>
-                <tr>
-                  <th>Patient Name</th>
-                  <th>Address</th>
-                  <th>Contact Number</th>
-                  <th>Gender</th>
-                  <th>Age</th>
-                  <th>Email</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Prescription</th>
-                </tr>
-              </thead>
-              <tbody>
-              {
-                reserveData.data.map((el, index) => {
-                  return(
-                    <tr key={el.userId}>
-                      <td>{el.patientName}</td>
-                      <td>{el.patientAddress}</td>
-                      <td>{el.contactNumber}</td>
-                      <td>{el.gender}</td>
-                      <td>{el.age}</td>
-                      <td>{el.emailAddress}</td>
-                      <td>{setupDate(el.date)}</td>
-                      <td>
-                        { el.status === 'pending' &&
-                          <Fragment>
-                           <Button variant="primary" onClick={(evt) => approve(evt, el)}>Approve</Button>{' '}                            
-                           <Button variant="danger" onClick={(evt) => reject(evt, el)}>Reject</Button>
-                          </Fragment>
-                        } 
-                        { el.status === 'approved' &&
-                          el.status
-                        }
-                      </td>
-                      <td>
-                        <Button disabled={el.status === 'pending' } variant='primary' onClick={() => router.push('/admin/' + el.prescriptionId)}>Set Prescription</Button>
-                      </td>
-                    </tr>
-                  )
-                })
-              }
-              </tbody>
-            </Table>
-            }
+
+            <Tabs
+              defaultActiveKey="notApproved"
+              id="uncontrolled-tab-example"
+              className="mb-3"
+            >
+              <Tab eventKey="notApproved" title="Pending Reservations">
+                { 
+                  notApprovedData &&
+                  <Table striped hover>
+                    <thead>
+                      <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Middle Initial</th>
+                        <th>Address</th>
+                        <th>Contact Number</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      notApprovedData.map((el, index) => {
+                        return(
+                          <tr key={index}>
+                            <td>{el.firstName}</td>
+                            <td>{el.lastName}</td>
+                            <td>{el.middleInitial}</td>
+                            
+                            <td>{el.patientAddress}</td>
+                            <td>{el.contactNumber}</td>
+                            <td>{el.gender}</td>
+                            <td>{el.age}</td>
+                            <td>{el.emailAddress}</td>
+                            <td>{setupDate(el.date)}</td>
+                            <td>{el.time}</td>
+                            <td>
+                              { el.status === 'pending' &&
+                                <Fragment>
+                                <Button variant="primary" onClick={(evt) => approve(evt, el)}>Approve</Button>{' '}                            
+                                <Button variant="danger" onClick={(evt) => reject(evt, el)}>Reject</Button>
+                                </Fragment>
+                              } 
+                              { el.status === 'approved' &&
+                                el.status
+                              }
+                            </td>
+                           
+                          </tr>
+                        )
+                      })
+                    }
+                    </tbody>
+                  </Table>
+                }
+              </Tab>
+              <Tab eventKey="approved" title="Approved Reservations">
+                { 
+                  approvedData &&
+                  <Table striped hover>
+                    <thead>
+                      <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Middle Initial</th>
+                        <th>Address</th>
+                        <th>Contact Number</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      approvedData.map((el, index) => {
+                        return(
+                          <tr key={index}>
+                            <td>{el.firstName}</td>
+                            <td>{el.lastName}</td>
+                            <td>{el.middleInitial}</td>
+                            
+                            <td>{el.patientAddress}</td>
+                            <td>{el.contactNumber}</td>
+                            <td>{el.gender}</td>
+                            <td>{el.age}</td>
+                            <td>{el.emailAddress}</td>
+                            <td>{setupDate(el.date)}</td>
+                            <td>{el.time}</td>
+                            <td>
+                              { el.status === 'pending' &&
+                                <Fragment>
+                                <Button variant="primary" onClick={(evt) => approve(evt, el)}>Approve</Button>{' '}                            
+                                <Button variant="danger" onClick={(evt) => reject(evt, el)}>Reject</Button>
+                                </Fragment>
+                              } 
+                              { el.status === 'approved' &&
+                                el.status
+                              }
+                            </td>
+                            <td><Button>Details</Button></td>
+                          
+                          </tr>
+                        )
+                      })
+                    }
+                    </tbody>
+                  </Table>
+                }
+              </Tab>
+              <Tab eventKey="paid" title="Patient Records">
+                { 
+                  paidData &&
+                  <Table striped hover>
+                    <thead>
+                      <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Middle Initial</th>
+                        <th>Address</th>
+                        <th>Contact Number</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      paidData.map((el, index) => {
+                        return(
+                          <tr key={index}>
+                            <td>{el.firstName}</td>
+                            <td>{el.lastName}</td>
+                            <td>{el.middleInitial}</td>
+                            
+                            <td>{el.patientAddress}</td>
+                            <td>{el.contactNumber}</td>
+                            <td>{el.gender}</td>
+                            <td>{el.age}</td>
+                            <td>{el.emailAddress}</td>
+                            <td>{setupDate(el.date)}</td>
+                            <td>{el.time}</td>
+                            
+                          
+                          </tr>
+                        )
+                      })
+                    }
+                    </tbody>
+                  </Table>
+                }
+              </Tab>
+            </Tabs>
+
+
+            
             
           </Col>
         </Row>

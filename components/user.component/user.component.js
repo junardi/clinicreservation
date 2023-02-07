@@ -8,19 +8,8 @@ import { Fragment } from 'react';
 import { toast } from 'react-toastify';
 
 
-const setupDate = (dateString) => {
-  const dateObj = new Date('2023-02-01T16:00:00.000Z');
-  //console.log(dateObj);
 
-  const month = dateObj.getMonth() + 1; 
-  const day = dateObj.getDate();
-  const year = dateObj.getFullYear();
-
-  const date = year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2);
-
-  return date;
-
-};
+import { setupDate } from '../../lib/data-helper';
 
 function UserComponent({userId}) {
 
@@ -111,10 +100,7 @@ function UserComponent({userId}) {
             </Table>
             }
 
-            <br />
-            { reserveData && reserveData.data &&
-              <p className='text-center'><strong>Prescription:</strong> {reserveData.data[0].prescription}</p>
-            }
+           
           </Col>
         </Row>
       </Container>

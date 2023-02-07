@@ -36,12 +36,11 @@ export default async function handler(req, res) {
   
   if(req.method === 'GET') {
 
-    const role = "user";
+    //const role = "user";
     try {
 
       const result = await excuteQuery({
-        query: 'SELECT * FROM users LEFT JOIN prescriptions ON users.userId = prescriptions.userId WHERE role=?',                                                                 
-        values: [role]
+        query: 'SELECT * FROM reservations LEFT JOIN users on reservations.userId = users.userId'                                                                
       });
       
       const data = {
@@ -69,20 +68,20 @@ export default async function handler(req, res) {
     const password = req.body.password;
     const passwordText = req.body.passwordText;
     const role = req.body.role;
-    const patientName = req.body.patientName;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const middleInitial = req.body.middleInitial;
     const patientAddress = req.body.patientAddress;
-    const contactNumber = req.body.contactNumber;
     const gender = req.body.gender;
     const age = req.body.age;
+    const contactNumber = req.body.contactNumber;
     const emailAddress = req.body.emailAddress;
-    const date = req.body.date;
-    const status = req.body.status;
 
     try {
 
       const result = await excuteQuery({
-        query: 'INSERT INTO users (username, password, passwordText, role, patientName, patientAddress, contactNumber, gender, age, emailAddress, date, status) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',                                                                 
-        values: [username, password, passwordText, role, patientName, patientAddress, contactNumber, gender, age, emailAddress, date, status]
+        query: 'INSERT INTO users (username, password, passwordText, role, firstName, lastName, middleInitial, patientAddress, contactNumber, gender, age, emailAddress) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',                                                                 
+        values: [username, password, passwordText, role, firstName, lastName, middleInitial, patientAddress, contactNumber, gender, age, emailAddress]
       });
 
       const data = {
@@ -92,8 +91,8 @@ export default async function handler(req, res) {
 
       const message = "Username: " + username + " Password: " + passwordText;
 
-      const sendText = await run(contactNumber, message);
-      console.log(sendText);
+      // const sendText = await run(contactNumber, message);
+      // console.log(sendText);
 
       res.status(200).json(data);
       
