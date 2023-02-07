@@ -78,7 +78,31 @@ export default async function handler(req, res) {
 
     
   } else if(req.method === 'DELETE') {
+    const reservationId = req.body.reservationId;
+
+    try {
+      const result = await excuteQuery({
+        query: 'DELETE FROM reservations WHERE reservationId=?',                                                                 
+        values: [reservationId]
+      });
+
+      const data = {
+        success: true,
+        data: result 
+      };
+
+      res.status(200).json(data);
+      
+    } catch(error) {
     
+      const data = {
+        success: false,
+        data: {}
+      };
+
+      res.status(200).json(data);
+
+    }
     
   }
 
