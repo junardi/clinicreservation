@@ -159,6 +159,8 @@ function UserComponent({userId}) {
                   <th>Email</th>
                   <th>Date</th>
                   <th>Status</th>
+                  <th>Action</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -176,6 +178,12 @@ function UserComponent({userId}) {
                       <td>{el.emailAddress}</td>
                       <td>{setupDate(el.date)}</td>
                       <td>{el.status}</td>
+                      <td>
+                        {
+                          el.status === 'approved' &&
+                          <Button variant='secondary' href={`/userreserve/${el.reservationId}`}>View Details</Button>
+                        }
+                      </td>
                     </tr>
                   )
                 })
@@ -187,7 +195,7 @@ function UserComponent({userId}) {
             }
             
             <p className='mt-4' style={{display: 'flex', justifyContent: 'flex-end'}}>
-              <Button onClick={handleShow}>Add New Reservation</Button>
+              <Button onClick={handleShow}>Create new Appointment</Button>
             </p>
             
 
@@ -199,7 +207,7 @@ function UserComponent({userId}) {
 
         <Form>
           <Modal.Header closeButton>
-            <Modal.Title>Add Reservation</Modal.Title>
+            <Modal.Title>Add New Appointment</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             

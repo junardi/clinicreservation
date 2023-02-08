@@ -64,7 +64,7 @@ function AdminComponent() {
 
         //console.log(jsonData);
         const approvedData = jsonData.data.filter((el, index) => {
-          if(el.status === 'approved') {
+          if(el.status === 'approved' && !el.paid) {
             return el;
           }
         });
@@ -377,6 +377,7 @@ function AdminComponent() {
                               <td>{el.emailAddress}</td>
                               <td>{setupDate(el.date)}</td>
                               <td>{el.time}</td>
+                              
                               <td>
                                 { el.status === 'pending' &&
                                   <Fragment>
@@ -388,7 +389,7 @@ function AdminComponent() {
                                   el.status
                                 }
                               </td>
-                              <td><Button>Details</Button></td>
+                              <td><Button href={`/reserve/${el.reservationId}`}>Details</Button></td>
                             
                             </tr>
                           )
@@ -425,7 +426,7 @@ function AdminComponent() {
                         {
                           paidData.map((el, index) => {
                             return(
-                              <tr key={index}>
+                              <tr key={index} onClick={() => router.push(`/reserve/${el.reservationId}`)} style={{cursor: 'pointer'}}>
                                 <td>{el.firstName}</td>
                                 <td>{el.lastName}</td>
                                 <td>{el.middleInitial}</td>
