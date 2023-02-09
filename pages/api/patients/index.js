@@ -1,9 +1,9 @@
 import excuteQuery from "../../../lib/db";
 import fetch from 'node-fetch';
 
-const SERVICE_PLAN_ID = 'bada997d9b7548dc832c6d8453481af0';
-const API_TOKEN = '39a977faef18433aa02af0a4d56c3e14';
-const SINCH_NUMBER = '+447520652728';
+const SERVICE_PLAN_ID = '3658ac03bb1b4125a916447026e56f79';
+const API_TOKEN = 'c1dab3deb02542e9970efa069a4fb6cb';
+const SINCH_NUMBER = '+447537404817';
 
 async function run(number, message) {
 
@@ -91,8 +91,8 @@ export default async function handler(req, res) {
 
       const message = "Username: " + username + " Password: " + passwordText;
 
-      // const sendText = await run(contactNumber, message);
-      // console.log(sendText);
+      const sendText = await run(contactNumber, message);
+      //console.log(sendText);
 
       res.status(200).json(data);
       

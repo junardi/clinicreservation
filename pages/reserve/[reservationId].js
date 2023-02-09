@@ -137,6 +137,7 @@ function SpecificReservation() {
                     </div>
 
                     <div className="textareaContainer">
+                      <h2>Rx</h2>
                       <textarea className="form-control" name="prescription" value={prescription} onChange={(evt) => setPrescription(evt.target.value)} id="prescription" cols="30" rows="10"></textarea>
                     </div>
 

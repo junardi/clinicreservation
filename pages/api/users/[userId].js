@@ -2,6 +2,8 @@ import excuteQuery from "../../../lib/db";
 
 /* Database Variables */
 
+// userId, username, password, passwordText, role, patientName, patientAddress, contactNumber, gender, age, emailAddress, date, status
+
 export default async function handler(req, res) {
   
   const userId = req.query.userId;
@@ -11,11 +13,9 @@ export default async function handler(req, res) {
     try {
 
       const result = await excuteQuery({
-        query: 'SELECT * FROM reservations LEFT JOIN users ON reservations.userId = users.userId WHERE users.userId=? ORDER BY reservations.date',                                                                 
+        query: 'SELECT * FROM users LEFT JOIN reservations ON users.userId = reservations.userId WHERE users.userId=?',                                                                 
         values: [userId]
       });
-
-    
       
       const data = {
         success: true,
@@ -38,12 +38,12 @@ export default async function handler(req, res) {
 
 
   } else if(req.method === 'POST') {
-
+   
     try {
-      const status = 'approved';
+
       const result = await excuteQuery({
-        query: 'SELECT * FROM reservations WHERE userId=? AND status=? ORDER BY date DESC LIMIT 1',                                                                 
-        values: [userId, status]
+        query: 'SELECT * FROM users WHERE users.userId=?',                                                                 
+        values: [userId]
       });
       
       const data = {
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       res.status(200).json(data);
 
     }
-   
+
   } else if(req.method === 'PUT') {
     
   } else if(req.method === 'DELETE') {

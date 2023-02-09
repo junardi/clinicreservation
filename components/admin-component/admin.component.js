@@ -18,6 +18,12 @@ const options = {
   keys: ['firstName', 'lastName', 'middleInitial']
 };
 
+const newOptions = {
+  includeScore: true,
+  threshold: 0.0,
+  keys: ['firstName', 'lastName', 'middleInitial', 'latestCheck']
+};
+
 function AdminComponent() {
 
   const exportRef = useRef();
@@ -48,7 +54,9 @@ function AdminComponent() {
 
   const [recall, setRecall] = useState(false);
 
+  const [users, setUsers] = useState([]);
 
+  const [ok, setOk] = useState(false);
   useEffect(() => {
     const getReservations = async() => {
       try {
@@ -60,7 +68,7 @@ function AdminComponent() {
         });
 
         const jsonData = await fetchData.json();
-        console.log(jsonData);
+        //console.log(jsonData);
 
         //console.log(jsonData);
         const approvedData = jsonData.data.filter((el, index) => {
@@ -73,20 +81,49 @@ function AdminComponent() {
 
         const notApprovedData = jsonData.data.filter((el, index) => {
           if(el.status === 'pending') {
-            return el;  
+          
+
+            const theDate = new Date(el.date).setHours(0,0,0,0);
+         
+
+            if(startDate && !endDate) {
+            
+              if(theDate >= startDate) {
+                return el;
+              }
+
+            } else if(endDate && !startDate) {
+              if(theDate <= endDate) {
+                return el;
+              }
+            } else if(startDate && endDate) {
+
+              if(theDate <= endDate && theDate >= startDate) {
+                return el;
+              }
+
+            } else {
+              
+              return el;  
+            }
+            
+            
+          
           }
         });
-        setNotApprovedData(notApprovedData);
+
         //console.log(notApprovedData);
+        setNotApprovedData(notApprovedData);
+      
 
-        const paidData = jsonData.data.filter((el, index) => {
-          if(el.paid) {
-            return el;  
-          }
-        });
+        // const paidData = jsonData.data.filter((el, index) => {
+        //   if(el.paid) {
+        //     return el;  
+        //   }
+        // });
 
-        setPaidData(paidData);
-        //console.log(paidData);
+        // setPaidData(paidData);
+       
         
         return jsonData;
        
@@ -98,6 +135,57 @@ function AdminComponent() {
     };
 
     getReservations();
+
+    const getUsers = async() => {
+
+      try {
+        const fetchData = await fetch('/api/users', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const jsonData = await fetchData.json();
+        jsonData.data.map(async(el, index) => {
+          //console.log(el);
+
+          try {
+            const newFetchData = await fetch('/api/reservations/' + el.userId , {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            const newJsonData = await newFetchData.json();
+           //console.log(newJsonData);
+            el.latestCheck = setupDate(newJsonData.data[0].date);
+            
+          } catch(error) {
+            console.log(error);
+          }
+        });
+        
+        console.log(jsonData.data);
+        
+        setPaidData(jsonData.data);
+        setTimeout(()=>{
+          setOk(true);
+        }, 1000)
+       
+        return jsonData;
+
+     
+      } catch(error) {
+        return error;
+      }
+
+    };
+
+    getUsers();
+
+
   }, [recall]);
 
 
@@ -229,7 +317,7 @@ function AdminComponent() {
     const {name, value} = event.target;
     clearTimeout(timer)
     const newTimer = setTimeout(() => {
-      const fuse = new Fuse(paidData, options)
+      const fuse = new Fuse(paidData, newOptions)
       const result = fuse.search(value);
 
       if(value !== '') {
@@ -237,6 +325,8 @@ function AdminComponent() {
         result.forEach(el => {
           newData.push(el.item);
         });
+
+        console.log(newData);
         
         setPaidData(newData);
 
@@ -249,8 +339,40 @@ function AdminComponent() {
     setTimer(newTimer);
   };
 
+  const [startDate, setStartDate] = useState(null);
+  const startDateChange = (event) => {
+    const value = event.target.value;
+    const date = new Date(value).setHours(0,0,0,0);
+    setStartDate(date);
+    setRecall(!recall);
+  };
+
+  const [endDate, setEndDate] = useState(null);
+  const endDateChange = (event) => {
+    const value = event.target.value;
+    const date = new Date(value).setHours(0,0,0,0);
+    setEndDate(date);
+    setRecall(!recall);
+  };
+
+  const [startDateApprove, setStartDateApprove] = useState(null);
+  const startDateChangeApprove = (event) => {
+    const value = event.target.value;
+    const date = new Date(value).setHours(0,0,0,0);
+    setStartDate(date);
+    setRecall(!recall);
+  };
+
+  const [endDateApprove, setEndDateApprove] = useState(null);
+  const endDateChangeApprove = (event) => {
+    const value = event.target.value;
+    const date = new Date(value).setHours(0,0,0,0);
+    setEndDate(date);
+    setRecall(!recall);
+  };
 
 
+ 
   return (
     <>
       <Head>
@@ -278,9 +400,20 @@ function AdminComponent() {
                 { 
                   notApprovedData &&
                   <>
-                    <div className='mb-3 mt-3' style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <div className='mb-3 mt-3' style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                      
+
+
+                      <span>Start Date</span> &nbsp; &nbsp;
+                      <input type="date" name='startDate' id='startDate' onChange={startDateChange} />
+                      &nbsp; &nbsp;
+                      <span>End Date</span> &nbsp; &nbsp;
+                      <input type="date" name='endDate' id='endDate' onChange={endDateChange} />
+                  
+                      &nbsp; &nbsp;
                       <input type="text" className='form-control' style={{width: '300px'}} name='notApproveSearch' placeholder='Search Firstname, LastName, M.I' onChange={notApproveSearch} />
-                    </div>
+                    
+                      </div>
                     
                     <Table striped hover>
                       <thead>
@@ -405,7 +538,7 @@ function AdminComponent() {
                   paidData &&
                   <>
                     <div className='mb-3 mt-3' style={{display: 'flex', justifyContent: 'flex-end'}}>
-                      <input type="text" className='form-control' style={{width: '300px', marginRight: '20px'}} name='approveSearch' placeholder='Search Firstname, LastName, M.I' onChange={paidSearch} />                                                        
+                      <input type="text" className='form-control' style={{width: '300px', marginRight: '20px'}} name='approveSearch' placeholder='Search' onChange={paidSearch} />                                                        
                       <Button onClick={() => exportAsImage(exportRef.current, "test")}>Print</Button>                                          
                     </div>
                     <div className='p-3' ref={exportRef}>
@@ -420,22 +553,23 @@ function AdminComponent() {
                             <th>Gender</th>
                             <th>Age</th>
                             <th>Email</th>
+                          
                           </tr>
                         </thead>
                         <tbody>
                         {
                           paidData.map((el, index) => {
                             return(
-                              <tr key={index} onClick={() => router.push(`/reserve/${el.reservationId}`)} style={{cursor: 'pointer'}}>
+                              <tr key={index} style={{cursor: 'pointer'}} onClick={() => router.push(`/userreservelist/${el.userId}`)}>
                                 <td>{el.firstName}</td>
                                 <td>{el.lastName}</td>
                                 <td>{el.middleInitial}</td>
-                                
                                 <td>{el.patientAddress}</td>
                                 <td>{el.contactNumber}</td>
                                 <td>{el.gender}</td>
                                 <td>{el.age}</td>
                                 <td>{el.emailAddress}</td>
+                                
                               </tr>
                             )
                           })
@@ -458,6 +592,8 @@ function AdminComponent() {
     </>
 
   )
+  
+  
 
 };
 
