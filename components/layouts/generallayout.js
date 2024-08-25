@@ -23,12 +23,12 @@ export default function GeneralLayout({children}) {
             <Col className='navigation-header'>
               
               <h1>
-                <Link href='/'>Online Reservation and Appointment Management System</Link>
+                <Link href='/'>Sepaya Dental Scheduling System</Link>
               </h1>
               { status !== 'authenticated' &&
                 <div className="left-header">
                   <Link href="/">Home</Link>
-                  <Link href="/reservation">Reservation</Link>
+                  <Link href="/reservation">Scheduling</Link>
                   <Link href="/login">Admin/Patient Login</Link>
                 </div>
               }
@@ -52,7 +52,7 @@ export default function GeneralLayout({children}) {
         <Container className='footer-inner'>
           <Row>
             <Col>
-              <p>Copyright &copy; 2022 Online Reservation and Appointment With Records System. All Rights Reserved.</p>                 
+              <p>Copyright &copy; Sepaya Dental Scheduling System</p>                 
             </Col>
           </Row>
         </Container>

@@ -117,12 +117,31 @@ function AdminComponent() {
       
 
         const paidData = jsonData.data.filter((el, index) => {
-          if(el.paid) {
+          //if(el.paid) {
             return el;  
-          }
+          //}
         });
 
-        setPaidData(paidData);
+
+        //console.log('paid data is ', paidData);
+
+
+        const combined = paidData.reduce((acc, obj) => {
+          const existing = acc.find(item => item.username === obj.username);
+        
+          if (existing) {
+            // Merge the existing object with the new one
+            Object.assign(existing, obj);
+          } else {
+            acc.push(obj);
+          }
+        
+          return acc;
+        }, []);
+
+
+        //setPaidData(paidData);
+        setPaidData(combined);
        
         
         return jsonData;
@@ -497,7 +516,7 @@ function AdminComponent() {
                           <th>Date</th>
                           <th>Time</th>
                           <th>Status</th>
-                          <th>Action</th>
+                          {/* <th>Action</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -528,7 +547,7 @@ function AdminComponent() {
                                   el.status
                                 }
                               </td>
-                              <td><Button href={`/reserve/${el.reservationId}`}>Details</Button></td>
+                              {/* <td><Button href={`/reserve/${el.reservationId}`}>Details</Button></td> */}
                             
                             </tr>
                           )
@@ -559,7 +578,7 @@ function AdminComponent() {
                             <th>Gender</th>
                             <th>Age</th>
                             <th>Email</th>
-                            <th>Last Appointment</th>
+                            {/* <th>Last Appointment</th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -575,7 +594,7 @@ function AdminComponent() {
                                 <td>{el.gender}</td>
                                 <td>{el.age}</td>
                                 <td>{el.emailAddress}</td>
-                                <td>{el.latestCheck}</td>
+                                {/* <td>{el.latestCheck}</td> */}
                                 
                               </tr>
                             )

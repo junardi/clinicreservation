@@ -141,6 +141,22 @@ function UserComponent({userId}) {
         <Row>
           <Col>
 
+       
+            <br />
+            { 
+            reserveData && reserveData.data &&
+            <div>
+              <h6><strong>Name:</strong> {reserveData.data[0].firstName}  {reserveData.data[0].middleInitial}  {reserveData.data[0].lastName}</h6>
+              <h6><strong>Gender:</strong> {reserveData.data[0].gender} </h6>
+              <h6><strong>Age:</strong> {reserveData.data[0].age}</h6>
+              <h6><strong>Contact Number:</strong> {reserveData.data[0].contactNumber}</h6>
+              <h6><strong>Email:</strong> {reserveData.data[0].emailAddress}</h6>
+              <h6><strong>Address:</strong> {reserveData.data[0].patientAddress}</h6>
+            </div>
+          }
+
+            <hr />
+
             <br />
             <h3>Your Appointment Details</h3>
             <br />
@@ -149,17 +165,17 @@ function UserComponent({userId}) {
             <Table striped hover>
               <thead>
                 <tr>
-                  <th>First Name</th>
+                  {/* <th>First Name</th>
                   <th>Last Name</th>
                   <th>Middle Initial</th>
                   <th>Address</th>
                   <th>Contact Number</th>
                   <th>Gender</th>
                   <th>Age</th>
-                  <th>Email</th>
+                  <th>Email</th> */}
                   <th>Date</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  {/* <th>Action</th> */}
 
                 </tr>
               </thead>
@@ -168,22 +184,22 @@ function UserComponent({userId}) {
                 reserveData.data.map((el, index) => {
                   return(
                     <tr key={index}>
-                      <td>{el.firstName}</td>
+                      {/* <td>{el.firstName}</td>
                       <td>{el.lastName}</td>
                       <td>{el.middleInitial}</td>
                       <td>{el.patientAddress}</td>
                       <td>{el.contactNumber}</td>
                       <td>{el.gender}</td>
                       <td>{el.age}</td>
-                      <td>{el.emailAddress}</td>
+                      <td>{el.emailAddress}</td> */}
                       <td>{setupDate(el.date)}</td>
                       <td>{el.status}</td>
-                      <td>
+                      {/* <td>
                         {
                           el.status === 'approved' &&
                           <Button variant='secondary' href={`/userreserve/${el.reservationId}`}>View Details</Button>
                         }
-                      </td>
+                      </td> */}
                     </tr>
                   )
                 })

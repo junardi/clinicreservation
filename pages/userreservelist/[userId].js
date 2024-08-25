@@ -119,10 +119,10 @@ function UserReserveList() {
                   <tr>
                     <th>Date</th>
                     <th>Time</th>
-                    <th>Diagnosis</th>
-                    <th>Prescription</th>
+                    {/* <th>Diagnosis</th>
+                    <th>Prescription</th> */}
                     <th>Status</th>
-                    <th>Payment</th>
+                    {/* <th>Payment</th> */}
                    
                   </tr>
                 </thead>
@@ -133,10 +133,10 @@ function UserReserveList() {
                         <tr key={index}>
                           <td>{setupDate(el.date)}</td>
                           <td>{el.time}</td>
-                          <td>{el.diagnosis}</td>
-                          <td>{el.prescription}</td>
+                          {/* <td>{el.diagnosis}</td>
+                          <td>{el.prescription}</td> */}
                           <td>{el.status}</td>
-                          <td>{el.paid ? 'Paid' : 'Not Paid'}</td>
+                          {/* <td>{el.paid ? 'Paid' : 'Not Paid'}</td> */}
                         </tr>
                       )
                     })

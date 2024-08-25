@@ -89,9 +89,9 @@ export default async function handler(req, res) {
         data: result 
       };
 
-      const message = "Username: " + username + " Password: " + passwordText;
+      // const message = "Username: " + username + " Password: " + passwordText;
 
-      const sendText = await run(contactNumber, message);
+      // const sendText = await run(contactNumber, message);
       //console.log(sendText);
 
       res.status(200).json(data);

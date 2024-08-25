@@ -16,7 +16,7 @@ export default function AdminLayout({children}) {
       <div>
         <div>
           <header>
-            <h1>Online Reservation and Appointment With Records System <Link href="/" onClick={doSignout}>Signout</Link></h1>                                                                  
+            <h1>Sepaya Dental Scheduling System <Link href="/" onClick={doSignout}>Signout</Link></h1>                                                                  
           </header>
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function AdminLayout({children}) {
       <div>
         <div>
           <footer>
-            <p>Copyright &copy; 2022. All Rights Reserved.</p>
+            <p>Copyright &copy; Sepaya Dental Scheduling System</p>
           </footer>
         </div>
       </div>
