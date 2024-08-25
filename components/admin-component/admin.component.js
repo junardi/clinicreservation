@@ -116,13 +116,13 @@ function AdminComponent() {
         setNotApprovedData(notApprovedData);
       
 
-        // const paidData = jsonData.data.filter((el, index) => {
-        //   if(el.paid) {
-        //     return el;  
-        //   }
-        // });
+        const paidData = jsonData.data.filter((el, index) => {
+          if(el.paid) {
+            return el;  
+          }
+        });
 
-        // setPaidData(paidData);
+        setPaidData(paidData);
        
         
         return jsonData;
@@ -147,7 +147,12 @@ function AdminComponent() {
         });
 
         const jsonData = await fetchData.json();
-        jsonData.data.map(async(el, index) => {
+        
+        // const promise = new Promise((resolve, reject) => {
+
+        // });
+
+        const newData = await jsonData.data.map(async(el, index) => {
           //console.log(el);
 
           try {
@@ -161,20 +166,21 @@ function AdminComponent() {
             const newJsonData = await newFetchData.json();
            //console.log(newJsonData);
             el.latestCheck = setupDate(newJsonData.data[0].date);
+
+            return el;
             
           } catch(error) {
             console.log(error);
+            return el;
           }
+
+        
         });
-        
-        console.log(jsonData.data);
-        
-        setPaidData(jsonData.data);
-        setTimeout(()=>{
-          setOk(true);
-        }, 1000)
+
+        console.log(newData);
+        setPaidData(newData.data);
        
-        return jsonData;
+        return await newData;
 
      
       } catch(error) {
@@ -553,7 +559,7 @@ function AdminComponent() {
                             <th>Gender</th>
                             <th>Age</th>
                             <th>Email</th>
-                          
+                            <th>Last Appointment</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -569,6 +575,7 @@ function AdminComponent() {
                                 <td>{el.gender}</td>
                                 <td>{el.age}</td>
                                 <td>{el.emailAddress}</td>
+                                <td>{el.latestCheck}</td>
                                 
                               </tr>
                             )

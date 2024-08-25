@@ -51,6 +51,8 @@ export default function Register() {
         role: 'user'
       };
 
+      console.log(data);
+
   
       try {
         const fetchData = await fetch('/api/users', {
@@ -62,6 +64,8 @@ export default function Register() {
         });
   
         const jsonData = await fetchData.json();
+
+        console.log(jsonData);
       
         if(jsonData.success && jsonData.data.affectedRows) {
           setIsRegistered(true);
@@ -69,6 +73,7 @@ export default function Register() {
   
       } catch(error) {
         //setData(null);
+        console.log(error);
       }
 
 

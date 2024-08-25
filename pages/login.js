@@ -33,8 +33,8 @@ function Login() {
   const doLogin = async(event) => {
     event.preventDefault();
 
-    // console.log(username);
-    // console.log(password);
+    console.log(username);
+    console.log(password);
 
     const result = await signIn('credentials', {
       redirect: false,

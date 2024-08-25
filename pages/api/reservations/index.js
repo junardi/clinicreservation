@@ -107,7 +107,7 @@ export default async function handler(req, res) {
 
       const message = "Your appointment is approved " + setupDate(req.body.date);
 
-      const sendText = await run(req.body.contactNumber, message);
+      //const sendText = await run(req.body.contactNumber, message);
 
       res.status(200).json(data);
       
