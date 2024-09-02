@@ -15,6 +15,7 @@ import NonSSRWrapper from '../components/nonssr/nonssr.component';
 import { hashPassword } from '../lib/data-helper';
 import { toast } from 'react-toastify';
 import { sendEmail } from '../utils/email/email.util';
+import { setupDate } from '../lib/data-helper';
 
 
 const defaultFormFields = {
@@ -38,7 +39,7 @@ const defaultReserveFormFields = {
 
 
 const dateToday = new Date();
-dateToday.setDate(dateToday.getDate() + 2);
+//dateToday.setDate(dateToday.getDate() + 2);
 const year = dateToday.getFullYear();
 const month = dateToday.getMonth();
 const dayOfTheMonth = dateToday.getDate();
@@ -58,6 +59,53 @@ const makeid = (length) => {
 
 
 function Home() {
+
+  const [limit, setLimit] = useState(null);
+  const [futureDates, setFutureDates] = useState(null);
+
+  useEffect(() => {
+    
+    const getLimits = async() => {
+      const fetchData = await fetch('/api/limits',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const jsonData = await fetchData.json();
+      //console.log(jsonData);
+      setLimit(jsonData.data[0].limitValue);
+    };
+
+    getLimits();
+
+  }, []);
+
+
+  useEffect(() => {
+    const getFutureDates = async() => {
+      const fetchData = await fetch('/api/futurereserve',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const jsonData = await fetchData.json();
+      //console.log('JSON data is ', jsonData.data);
+      const arrayValues = jsonData.data.map((data) => {
+        //console.log(setupDate(data.date));
+        return setupDate(data.date);
+      }); 
+
+      //console.log('array values is ', arrayValues);
+      setFutureDates(arrayValues);
+    };
+
+    getFutureDates();
+
+  },[]);
+
 
 
   const router = useRouter();
@@ -108,11 +156,26 @@ function Home() {
   };
 
 
+  const disableDateByLimit = ({activeStartDate, date, view }) => {
+    //console.log('active start date is ', activeStartDate);
+
+    // console.log('date is ', setupDate(date));
+    // console.log('limit is ', limit);
+    // console.log('future dates is ', futureDates);
+
+    //console.log('view is ', view);
+    const count = futureDates.filter(item => item === setupDate(date)).length;
+
+    return limit <= count;
+    
+  };
+
+
   const doReserve = async(event) => {
     event.preventDefault();
 
     //console.log(reserveFormFields);
-    if(firstName != '' && lastName != '' && middleInitial != '' && address != '' && contactNumber != '' && gender != '' && age != '' && date != '' && time != '') {                                         
+    if(firstName != '' && lastName != '' && middleInitial != '' && address != '' && contactNumber != '' && gender != '' && age != '' && date != '' && email != '') {                                         
       
       const pass = makeid(7);
       const data = {
@@ -188,9 +251,9 @@ function Home() {
           toast('Generated username and password is sent to your email and contact number: ' + email + ' ' + contactNumber);
           toast('Proceed to login to view appointment status...');
 
-          // setTimeout(() => {
-          //   router.push('/login');
-          // }, 2000);
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
 
         } catch(error) {
 
@@ -315,40 +378,46 @@ function Home() {
                
 
                 <div className="form-group">
-                  <p style={{marginBottom: 10}}><label htmlFor="email"><strong>Email Address</strong>(optional): </label></p>
+                  <p style={{marginBottom: 10}}><label htmlFor="email"><strong>Email Address</strong> </label></p>
                   <input className='form-control' type="text" name="email" value={email} onChange={handleReserveFormInputsChange} />
                 </div>
 
                 <div className="form-group">
                   <p style={{marginBottom: 10}}><label htmlFor="date"><strong>Select Date</strong>: </label></p>
-               
+
+                  { futureDates &&
                   <NonSSRWrapper>
                     <Calendar 
                       onChange={newDateChange} 
                       value={dateValue} 
                       minDate={new Date(year, month, dayOfTheMonth)}
-                      tileDisabled={disableSunday}
-                      tileContent={sundayText}
-
+                      // tileDisabled={disableSunday}
+                      // tileContent={sundayText}
+                      tileDisabled={disableDateByLimit}
                     />
                   </NonSSRWrapper>
-                </div>
+
+                  }
 
 
-                <div>
-                  <p style={{marginBottom: 2}}><label htmlFor="gender"><strong>Time</strong>: </label></p>
-                  <select className='form-control' name="time" value={time} onChange={handleReserveFormInputsChange}>
-                    <option value=""></option>
-                    <option value="8-9 AM">8-9 AM</option>
-                    <option value="9-10 AM">9-10 AM</option>
-                    <option value="10-11 AM">10-11 AM</option>
-                    <option value="11-12 AM">11-12 AM</option>
-                    <option value="1-2 PM">1-2 PM</option>
-                    <option value="2-3 PM">2-3 PM</option>
-                    <option value="3-4 PM">3-4 PM</option>
-                    <option value="4-5 PM">4-5 PM</option>
-                  </select>
                 </div>
+
+                {
+                // <div>
+                //   <p style={{marginBottom: 2}}><label htmlFor="gender"><strong>Time</strong>: </label></p>
+                //   <select className='form-control' name="time" value={time} onChange={handleReserveFormInputsChange}>
+                //     <option value=""></option>
+                //     <option value="8-9 AM">8-9 AM</option>
+                //     <option value="9-10 AM">9-10 AM</option>
+                //     <option value="10-11 AM">10-11 AM</option>
+                //     <option value="11-12 AM">11-12 AM</option>
+                //     <option value="1-2 PM">1-2 PM</option>
+                //     <option value="2-3 PM">2-3 PM</option>
+                //     <option value="3-4 PM">3-4 PM</option>
+                //     <option value="4-5 PM">4-5 PM</option>
+                //   </select>
+                // </div>
+                }
 
                 <br />
                 

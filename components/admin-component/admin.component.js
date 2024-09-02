@@ -26,6 +26,53 @@ const newOptions = {
 
 function AdminComponent() {
 
+
+  const [limit, setLimit] = useState(null);
+
+  useEffect(() => {
+    
+    const getLimits = async() => {
+      
+      const fetchData = await fetch('/api/limits',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const jsonData = await fetchData.json();
+      //console.log(jsonData);
+      setLimit(jsonData.data[0].limitValue);
+
+    };
+
+    getLimits();
+
+
+  }, []);
+
+  const updateLimit = async() => {
+    console.log('limit to update is', limit);
+    const data = {
+      limit: limit
+    };
+
+    const fetchUpdateLinmit = await fetch('/api/limits',{
+      method: 'PUT',
+      body: JSON.stringify({...data}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const jsonDataUpdateLimit = await fetchUpdateLinmit.json();
+    console.log('data to update is ', jsonDataUpdateLimit);
+
+    toast("Updated limit");
+
+  };
+
+
   const exportRef = useRef();
 
   const router = useRouter();
@@ -68,16 +115,8 @@ function AdminComponent() {
         });
 
         const jsonData = await fetchData.json();
-        //console.log(jsonData);
+        console.log(jsonData);
 
-        //console.log(jsonData);
-        const approvedData = jsonData.data.filter((el, index) => {
-          if(el.status === 'approved' && !el.paid) {
-            return el;
-          }
-        });
-        setApprovedData(approvedData);
-        //console.log(approvedData);
 
         const notApprovedData = jsonData.data.filter((el, index) => {
           if(el.status === 'pending') {
@@ -111,45 +150,53 @@ function AdminComponent() {
           
           }
         });
-
-        //console.log(notApprovedData);
         setNotApprovedData(notApprovedData);
-      
 
+
+        const approvedData = jsonData.data.filter((el, index) => {
+          if(el.status === 'approved') {
+            return el;
+          }
+        });
+        setApprovedData(approvedData);
+
+      
         const paidData = jsonData.data.filter((el, index) => {
           //if(el.paid) {
             return el;  
           //}
         });
 
-
-        //console.log('paid data is ', paidData);
-
-
-        const combined = paidData.reduce((acc, obj) => {
-          const existing = acc.find(item => item.username === obj.username);
+        // const combined = paidData.reduce((acc, obj) => {
+        //   const existing = acc.find(item => item.username === obj.username);
         
-          if (existing) {
-            // Merge the existing object with the new one
-            Object.assign(existing, obj);
-          } else {
-            acc.push(obj);
+        //   if (existing) {
+        //     // Merge the existing object with the new one
+        //     Object.assign(existing, obj);
+        //   } else {
+        //     acc.push(obj);
+        //   }
+        
+        //   return acc;
+        // }, []);
+
+        //const combined = [...new Set(paidData)];
+
+        const combined = paidData.reduce((acc, item) => {
+          if (!acc.some(obj => obj.username === item.username)) {
+            acc.push(item);
           }
-        
           return acc;
         }, []);
-
-
-        //setPaidData(paidData);
+        
+        console.log('combined is ', combined);
         setPaidData(combined);
        
-        
-        return jsonData;
-       
+        //return jsonData;
 
       } catch(error) {
         console.log(error);
-        return error;
+        //return error;
       }
     };
 
@@ -208,7 +255,7 @@ function AdminComponent() {
 
     };
 
-    getUsers();
+    //getUsers();
 
 
   }, [recall]);
@@ -239,11 +286,12 @@ function AdminComponent() {
         to_name: data.firstName + " " + data.middleInitial + " " + data.lastName,
         to_email: data.emailAddress,
         intro_message: "Appointment Status",
-        message: "Your appointment is approved"
+        message: "Your appointment is approved " 
       };
 
       if(data.emailAddress) {
         await sendEmail(templateParams);
+        console.log('sent');
       }
      
       setRecall(!recall);
@@ -415,6 +463,32 @@ function AdminComponent() {
             <h3>List of Appointments</h3>
             <br />
 
+            { limit !== null &&
+            <div className="limitContainer mb-3">
+             
+              <Row className="align-items-center">
+                <Col xs="auto">
+                  <Form.Label htmlFor="inlineFormInput" visuallyHidden>
+                    Limit
+                  </Form.Label>
+                  <Form.Control
+                    className="mb-2"
+                    id="inlineFormInput"
+                    placeholder="Limit"
+                    type='number'
+                    value={limit}
+                    onChange={(evt) => setLimit(evt.target.value)}
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Button type="submit" className="mb-2" onClick={updateLimit}>
+                    Update Limit
+                  </Button>
+                </Col>
+              </Row>
+            
+            </div>
+            }
 
             <Tabs
               defaultActiveKey="notApproved"
@@ -452,7 +526,7 @@ function AdminComponent() {
                           <th>Age</th>
                           <th>Email</th>
                           <th>Date</th>
-                          <th>Time</th>
+                          {/* <th>Time</th> */}
                           <th>Status</th>
                         </tr>
                       </thead>
@@ -471,7 +545,7 @@ function AdminComponent() {
                               <td>{el.age}</td>
                               <td>{el.emailAddress}</td>
                               <td>{setupDate(el.date)}</td>
-                              <td>{el.time}</td>
+                              {/* <td>{el.time}</td> */}
                               <td>
                                 { el.status === 'pending' &&
                                   <Fragment>
@@ -514,7 +588,7 @@ function AdminComponent() {
                           <th>Age</th>
                           <th>Email</th>
                           <th>Date</th>
-                          <th>Time</th>
+                          {/* <th>Time</th> */}
                           <th>Status</th>
                           {/* <th>Action</th> */}
                         </tr>
@@ -534,7 +608,7 @@ function AdminComponent() {
                               <td>{el.age}</td>
                               <td>{el.emailAddress}</td>
                               <td>{setupDate(el.date)}</td>
-                              <td>{el.time}</td>
+                              {/* <td>{el.time}</td> */}
                               
                               <td>
                                 { el.status === 'pending' &&

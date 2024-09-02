@@ -41,6 +41,7 @@ export default async function handler(req, res) {
 
       const result = await excuteQuery({
         query: 'SELECT * FROM reservations LEFT JOIN users on reservations.userId = users.userId ORDER BY reservations.date'                                                                
+       
       });
       
       const data = {

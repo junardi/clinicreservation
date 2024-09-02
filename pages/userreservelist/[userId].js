@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Container, Row, Col, Form, Button, Table, FloatingLabel } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 import logo from '../../images/logo2.png';
 import Image from "next/image";
@@ -106,6 +107,9 @@ function UserReserveList() {
         <Container>
           <Row>
             <Col>
+
+              <p className="text-end"><Link href="/admin">&#x2190; Go back</Link></p>
+
               <h3>Patient Details</h3>
               
               <div className="detailsGroup">
@@ -118,7 +122,7 @@ function UserReserveList() {
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Time</th>
+                    {/* <th>Time</th> */}
                     {/* <th>Diagnosis</th>
                     <th>Prescription</th> */}
                     <th>Status</th>
@@ -132,7 +136,7 @@ function UserReserveList() {
                       return(
                         <tr key={index}>
                           <td>{setupDate(el.date)}</td>
-                          <td>{el.time}</td>
+                          {/* <td>{el.time}</td> */}
                           {/* <td>{el.diagnosis}</td>
                           <td>{el.prescription}</td> */}
                           <td>{el.status}</td>
