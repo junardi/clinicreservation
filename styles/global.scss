@@ -399,3 +399,90 @@ main {
     //margin-bottom: 0px;
   }
 }
+
+
+.unavailableContainer  {
+ 
+  .react-calendar__tile--now {
+    background: none !important;
+  }
+
+  .react-calendar__tile--active {
+    background: none !important;
+    color: rgba(0, 0, 0, 0.5) !important;
+
+    &:hover {
+      background-color: #e6e6e6 !important;
+    }
+  }
+
+  .react-calendar__tile.highlightedTile {
+    background-color: rgb(125, 37, 37) !important;
+    color: #FFFFFF !important;
+  }
+
+
+}
+
+
+.forPrinting {
+  display: none;
+}
+
+
+@media print {
+
+  .forPrinting {
+    display: block !important;
+  }
+  
+
+
+  html {
+    width: 100%;
+  }
+  .navigation-container {
+    display: none !important;
+  }
+
+  .noPrint {
+    display: none !important;
+  }
+
+  .nav-tabs {
+    display: none !important;
+  }
+
+  .footer {
+    display: none !important;
+  }
+
+  .tab-content {
+ 
+    width: 100% !important;
+    margin: 0px !important;
+    padding: 0px !important
+  }
+
+
+
+  // .printCOntainer {
+  //   border: 2px solid navy;
+  // }
+
+  .main-container {
+   
+    padding: 0px !important;
+    margin: 0px !important;
+
+    > .container {
+      border: 1px solid navy;
+      width: 100% !important;
+      display: none !important;
+    }
+
+
+
+  }
+
+}

@@ -304,41 +304,52 @@ function AdminComponent() {
   const reject = async(event, data) => {
     event.preventDefault();
 
-    data.date = setupDate(data.date);
-   
-    try {
-      const fetchData = await fetch('/api/reservations', {
-        method: 'DELETE',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
+    let reason  = prompt("Enter reason: ", "Harry Potter");
+    if (reason != null) {
+      
+      data.date = setupDate(data.date);
+    
+      try {
+        const fetchData = await fetch('/api/reservations', {
+          method: 'DELETE',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const jsonData = await fetchData.json();
+
+        console.log(jsonData);
+        toast("Rejected.");
+        const templateParams = {
+          from_name: 'From CLinic', 
+          to_name: data.patientName,
+          to_email: data.emailAddress,
+          intro_message: "Appointment Status",
+          message: reason
+        };
+
+        if(data.emailAddress) {
+          await sendEmail(templateParams);
         }
-      });
+        setRecall(!recall);
 
-      const jsonData = await fetchData.json();
-
-      console.log(jsonData);
-      toast("Rejected.");
-      const templateParams = {
-        from_name: 'From CLinic', 
-        to_name: data.patientName,
-        to_email: data.emailAddress,
-        intro_message: "Appointment Status",
-        message: "Your appointment is rejected"
-      };
-
-      if(data.emailAddress) {
-        await sendEmail(templateParams);
+      } catch(error) {
+        console.log(error);
+        toast("something went wrong.");
       }
-      setRecall(!recall);
 
-    } catch(error) {
-      console.log(error);
-      toast("something went wrong.");
     }
+
+
+
+
+
   };
 
   const [timer, setTimer] = useState(null)
+
   const notApproveSearch = (event) => {
     const {name, value} = event.target;
     clearTimeout(timer)
@@ -444,6 +455,44 @@ function AdminComponent() {
     setRecall(!recall);
   };
 
+  const [currentEventKey, setCurrentEventKey] = useState('notApproved');
+  const selectTab = (key) => {
+    console.log('key is ', key);
+    setCurrentEventKey(key);
+  };
+
+
+  const [notApproveMaleCount, setNotApproveMaleCount] = useState(0);
+  const [notApproveFemaleCount, setNotApproveFemaleCount] = useState(0);
+
+  const [approveMaleCount, setApproveMaleCount] = useState(0);
+  const [approveFemaleCount, setApproveFemaleCount] = useState(0);
+
+  const [paidMaleCount, setPaidMaleCount] = useState(0);
+  const [paidFemaleCount, setPaidFemaleCount] = useState(0);
+
+
+
+  useEffect(() => {
+    const maleCount = notApprovedData.filter(person => person.gender.toLowerCase() === "male").length;
+    const femaleCount = notApprovedData.filter(person => person.gender.toLowerCase() === "female").length;
+    setNotApproveMaleCount(maleCount);
+    setNotApproveFemaleCount(femaleCount);
+  }, [notApprovedData]);
+
+  useEffect(() => {
+    const maleCount = approvedData.filter(person => person.gender.toLowerCase() === "male").length;
+    const femaleCount = approvedData.filter(person => person.gender.toLowerCase() === "female").length;
+    setApproveMaleCount(maleCount);
+    setApproveFemaleCount(femaleCount);
+  }, [approvedData]);
+
+  useEffect(() => {
+    const maleCount = paidData.filter(person => person.gender.toLowerCase() === "male").length;
+    const femaleCount = paidData.filter(person => person.gender.toLowerCase() === "female").length;
+    setPaidMaleCount(maleCount);
+    setPaidFemaleCount(femaleCount);
+  }, [paidData]);
 
  
   return (
@@ -455,16 +504,16 @@ function AdminComponent() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Container>
+      <Container className='printCOntainer'>
         <Row>
           <Col>
 
             <br />
-            <h3>List of Appointments</h3>
+            <h3 className='noPrint'>List of Appointments</h3>
             <br />
 
             { limit !== null &&
-            <div className="limitContainer mb-3">
+            <div className="limitContainer mb-3 noPrint">
              
               <Row className="align-items-center">
                 <Col xs="auto">
@@ -484,6 +533,11 @@ function AdminComponent() {
                   <Button type="submit" className="mb-2" onClick={updateLimit}>
                     Update Limit
                   </Button>
+
+                  <Button onClick={() => window.print()} type="submit" className="mb-2" style={{marginLeft: '10px'}}>
+                    View Report
+                  </Button>
+
                 </Col>
               </Row>
             
@@ -494,12 +548,13 @@ function AdminComponent() {
               defaultActiveKey="notApproved"
               id="uncontrolled-tab-example"
               className="mb-3"
+              onSelect={selectTab}
             >
               <Tab eventKey="notApproved" title="Pending Reservations">
                 { 
                   notApprovedData &&
                   <>
-                    <div className='mb-3 mt-3' style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                    <div className='mb-3 mt-3 noPrint' style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
                       
 
 
@@ -550,7 +605,7 @@ function AdminComponent() {
                                 { el.status === 'pending' &&
                                   <Fragment>
                                   <Button variant="primary" onClick={(evt) => approve(evt, el)}>Approve</Button>{' '}                            
-                                  <Button variant="danger" onClick={(evt) => reject(evt, el)}>Reject</Button>
+                                  <Button variant="danger" onClick={(evt) => reject(evt, el)}>Disapprove</Button>
                                   </Fragment>
                                 } 
                                 { el.status === 'approved' &&
@@ -569,7 +624,7 @@ function AdminComponent() {
 
                 }
               </Tab>
-              <Tab eventKey="approved" title="Approved Reservations">
+              <Tab eventKey="approved" title="Approved Reservations" >
                 { 
                   approvedData &&
                   <>
@@ -688,6 +743,179 @@ function AdminComponent() {
           </Col>
         </Row>
       </Container>
+
+      
+      <div className='forPrinting'>
+      
+        <h1 className='py-2'>Report</h1>
+
+        { 
+          notApprovedData && currentEventKey === 'notApproved' &&
+          <>
+            
+            
+            <Table striped hover>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Middle Initial</th>
+                  <th>Address</th>
+                  <th>Contact Number</th>
+                  <th>Gender</th>
+                  <th>Age</th>
+                  <th>Email</th>
+                  <th>Date</th>
+              
+                </tr>
+              </thead>
+              <tbody>
+              {
+                notApprovedData.map((el, index) => {
+                  return(
+                    <tr key={index}>
+                      <td>{el.firstName}</td>
+                      <td>{el.lastName}</td>
+                      <td>{el.middleInitial}</td>
+                      
+                      <td>{el.patientAddress}</td>
+                      <td>{el.contactNumber}</td>
+                      <td>{el.gender}</td>
+                      <td>{el.age}</td>
+                      <td>{el.emailAddress}</td>
+                      <td>{setupDate(el.date)}</td>
+                    
+                    
+                    </tr>
+                  )
+                })
+              }
+              </tbody>
+            </Table>
+
+            <p>
+              <strong>Male Total: </strong>
+              <span> {notApproveMaleCount}</span>
+            </p>
+
+            <p>
+              <strong>Female Total: </strong>
+              <span> {notApproveFemaleCount}</span>
+            </p>
+
+          </>
+
+
+        }
+
+        {  
+          approvedData && currentEventKey === 'approved' &&
+          <>
+         
+            <Table striped hover>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Middle Initial</th>
+                  <th>Address</th>
+                  <th>Contact Number</th>
+                  <th>Gender</th>
+                  <th>Age</th>
+                  <th>Email</th>
+                  <th>Date</th>
+                
+                </tr>
+              </thead>
+              <tbody>
+              {
+                approvedData.map((el, index) => {
+                  return(
+                    <tr key={index}>
+                      <td>{el.firstName}</td>
+                      <td>{el.lastName}</td>
+                      <td>{el.middleInitial}</td>
+                      
+                      <td>{el.patientAddress}</td>
+                      <td>{el.contactNumber}</td>
+                      <td>{el.gender}</td>
+                      <td>{el.age}</td>
+                      <td>{el.emailAddress}</td>
+                      <td>{setupDate(el.date)}</td>
+                  
+                    </tr>
+                  )
+                })
+              }
+              </tbody>
+            </Table>
+
+            <p>
+              <strong>Male Total: </strong>
+              <span> {approveMaleCount}</span>
+            </p>
+
+            <p>
+              <strong>Female Total: </strong>
+              <span> {approveFemaleCount}</span>
+            </p>
+
+          </>
+        }
+
+
+        { 
+          paidData && currentEventKey === 'paid' &&
+          <>
+        
+            <div className='p-3' ref={exportRef}>
+              <Table striped hover>
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Middle Initial</th>
+                    <th>Address</th>
+                    <th>Contact Number</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {
+                  paidData.map((el, index) => {
+                    return(
+                      <tr key={index} style={{cursor: 'pointer'}} onClick={() => router.push(`/userreservelist/${el.userId}`)}>
+                        <td>{el.firstName}</td>
+                        <td>{el.lastName}</td>
+                        <td>{el.middleInitial}</td>
+                        <td>{el.patientAddress}</td>
+                        <td>{el.contactNumber}</td>
+                        <td>{el.gender}</td>
+                        <td>{el.age}</td>
+                        <td>{el.emailAddress}</td>
+                      </tr>
+                    )
+                  })
+                }
+                </tbody>
+              </Table>
+
+              <p>
+                <strong>Male Total: </strong>
+                <span> {paidMaleCount}</span>
+              </p>
+
+              <p>
+                <strong>Female Total: </strong>
+                <span> {paidFemaleCount}</span>
+              </p>
+            </div>
+          </>
+        }
+
+      </div>
       
     </>
 

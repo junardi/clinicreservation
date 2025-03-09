@@ -35,6 +35,9 @@ export default function GeneralLayout({children}) {
               { status === 'authenticated' &&
                 <div className="left-header">
                   <Link href="/">Home</Link>
+                  { session.user.role === 'admin' &&
+                  <Link href="/admin/unavailables">Doctor Schedule</Link>
+                  }
                   <Link href="#" onClick={doSignout}>Logout</Link>
                 </div>
               }
